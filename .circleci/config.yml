@@ -120,6 +120,7 @@ jobs:
             npm audit --audit-level=critical
       - slack/notify:
           event: fail
+          template: basic_fail_1
       - slack/notify:
           event: pass
       - save_cache:
@@ -142,9 +143,7 @@ jobs:
             npm audit fix --force
             npm audit --audit-level=critical
       - slack/notify:
-          event: fail
-      - slack/notify:
-          event: pass
+          event: always
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
