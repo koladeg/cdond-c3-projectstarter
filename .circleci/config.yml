@@ -176,7 +176,7 @@ jobs:
           command: |
             aws cloudformation \
             list-exports --query "Exports[?Name==\`PublicIp\`].Value" \
-            --no-paginate --output text > ~/.circleci/ansible/inventory.txt
+            --no-paginate --output text > .circleci/ansible/inventory.txt
       - run:
           name: Print inventory file
           command: cat .circleci/ansible/inventory.txt
