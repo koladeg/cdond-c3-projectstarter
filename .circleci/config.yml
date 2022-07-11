@@ -200,8 +200,8 @@ jobs:
       - run:
           name: Configure server
           command: |
-            echo $PATH
             cd .circleci/ansible
+            echo $PATH
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"       
@@ -221,7 +221,6 @@ jobs:
             aws --version
       - run:
           name: Run migrations
-          no_output_timeout: 20m
           command: |
             cd backend/src
             npm install
@@ -271,7 +270,13 @@ jobs:
             cd frontend
             npm install
             npm run build
+      - run:
+          name: Copy the files to dist
+          command: |
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+      - run:
+          name: Copy the files to new S3
+          command: |
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
       - revert-migrations:
           circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}" 
@@ -292,7 +297,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip curl nodejs npm openssh-client git
+            apk add --update tar gzip curl nodejs npm ansible
             pip install awscli
             aws --version
       - run:
@@ -302,8 +307,14 @@ jobs:
             npm i
             npm run build
             cd ..
+      - run:
+          name: Zip the directory
+          command: |
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
+      - run:
+          name: Run playbook
+          command: |
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
