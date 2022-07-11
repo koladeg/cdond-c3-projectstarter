@@ -17,6 +17,7 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name "udapeople-backend-<< parameters.circle_workflow_id >>"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-<< parameters.circle_workflow_id >>"
+            aws s3 rm s3://udapeople-<< parameters.circle_workflow_id >> --recursive
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -88,7 +89,7 @@ jobs:
             npm run test
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-build
+          key: frontend-test
                 
   test-backend:
     docker:
@@ -105,7 +106,7 @@ jobs:
             npm run test
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-build
+          key: backend-test
             
   scan-frontend:
     docker:
@@ -121,13 +122,8 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
-      - run: echo $SLACK_ACCESS_TOKEN
-      - run: echo $SLACK_DEFAULT_CHANNEL
       - slack/notify:
           event: always
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-build
 
   scan-backend:
     docker:
@@ -146,9 +142,6 @@ jobs:
             npm audit --audit-level=critical
       - slack/notify:
           event: fail
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
 
   deploy-infrastructure:
     docker:
@@ -200,7 +193,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            apk add --update tar gzip curl nodejs npm openssh-client git
+            pip install awscli
+            aws --version
       - run:
           name: Configure server
           command: |
@@ -236,7 +231,7 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
                # If you are using kvdb.io, generate the bucket ID "P5thQCXKuMdbXnoXdEHU3o" in your local terminal first
-               curl https://kvdb.io/PExKxp6S61Ln855d48dp9a/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+               curl https://kvdb.io/RrQ2ADt1ZS6ZtaGBKafeaL/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - save_cache:
           paths: [backend/node_modules]
@@ -332,8 +327,6 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(cat ~/env_vars.txt)
-            # echo ${BACKEND_IP}
             # Fetch and prepare the BACKEND_IP env var
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
