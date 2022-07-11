@@ -169,8 +169,8 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             aws cloudformation \
-            list-exports --query "Exports[?Name==\`PublicIp\`].Value" \
-            --no-paginate --output text > .circleci/ansible/inventory.txt
+              list-exports --query "Exports[?Name==\`PublicIp\`].Value" \
+              --no-paginate --output text > .circleci/ansible/inventory.txt
       - run:
           name: Print inventory file
           command: cat .circleci/ansible/inventory.txt
@@ -199,6 +199,7 @@ jobs:
       - run:
           name: Configure server
           command: |
+            echo $PATH
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
