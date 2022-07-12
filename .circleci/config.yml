@@ -331,15 +331,18 @@ jobs:
             apk add --update tar gzip curl nodejs npm openssh-client git
             pip install awscli
             aws --version
+      # - run:
+      #     name: Get backend url
+      #     command: |
+            
       - run:
-          name: Get backend url
-          command: |
-            cd .circleci/ansible
-            export BACKEND_IP=$(cat inventory.txt)
-      - run:
-          name: Backend smoke test.
+          name: Get backend url and backend smoke test.
           command: |
             # Fetch and prepare the BACKEND_IP env var
+            cd .circleci/ansible
+            cat frontend/.env
+            cat inventory.txt
+            export BACKEND_IP=$(cat inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
             ls
             echo "${API_URL}"
@@ -360,10 +363,10 @@ jobs:
             else
                 return 1
             fi
-      - revert-migrations:
-          circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      - destroy-environment:
-          circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
+      # - revert-migrations:
+      #     circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      # - destroy-environment:
+      #     circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
 
   # cloudfront-update:
   #   docker:
