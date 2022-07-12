@@ -331,16 +331,18 @@ jobs:
             apk add --update tar gzip curl nodejs npm openssh-client git
             pip install awscli
             aws --version
-      # - run:
-      #     name: Get backend url
-      #     command: |
+      - run:
+          name: Get backend url
+          command: |
+            aws cloudformation \
+              list-exports --query "Exports[?Name==\`PublicIp\`].Value" \
+              --no-paginate --output text > .circleci/ansible/inventory.txt
       - run:
           name: Get backend url and backend smoke test.
           command: |
             # Fetch and prepare the BACKEND_IP env var
             cd .circleci/ansible
             cat inventory.txt
-            cat frontend/.env
             export BACKEND_IP=$(cat inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
             ls
