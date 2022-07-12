@@ -193,15 +193,13 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # apk add --update tar gzip curl nodejs npm openssh-client git
-            # pip install awscli
-            # aws --version
-            apk add --update ansible
+            apk add --update tar gzip curl nodejs npm ansible
+            pip install awscli
+            aws --version
       - run:
           name: Configure server
           command: |
             cd .circleci/ansible
-            echo $PATH
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"       
@@ -270,6 +268,7 @@ jobs:
             cd frontend
             npm install
             npm run build
+            ls
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
       - run:
           name: Copy the files to new S3
