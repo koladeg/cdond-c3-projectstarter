@@ -334,7 +334,6 @@ jobs:
       # - run:
       #     name: Get backend url
       #     command: |
-            
       - run:
           name: Get backend url and backend smoke test.
           command: |
