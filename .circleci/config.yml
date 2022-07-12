@@ -263,15 +263,19 @@ jobs:
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run:
-          name: Deploy frontend objects
+          name: enter frontend objects
           command: |
             cd frontend
+            ls
+      - run:
+          name: Deploy frontend objects
+          command: |
             npm install
             npm run build
       - run:
           name: Copy the files to dist
           command: |
-            ls
+            cd frontend
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
       - run:
           name: Copy the files to new S3
