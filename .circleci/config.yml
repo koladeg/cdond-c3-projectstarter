@@ -263,24 +263,15 @@ jobs:
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run:
-          name: enter frontend objects
-          command: |
-            cd frontend
-            ls
-      - run:
           name: Deploy frontend objects
           command: |
+            cd frontend
             npm install
             npm run build
-      - run:
-          name: Copy the files from dist
-          command: |
-            cd frontend
+            echo $(ls)
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-      - run:
-          name: Copy the files to new S3
-          command: |
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
+            echo $(ls)
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations:
           circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}" 
       - destroy-environment:
