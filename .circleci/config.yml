@@ -251,7 +251,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip curl nodejs npm 
+            apk add --update tar gzip curl nodejs npm openssh-client git
             pip install awscli
             aws --version
       - run:
