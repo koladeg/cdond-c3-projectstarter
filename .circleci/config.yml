@@ -270,9 +270,6 @@ jobs:
             cd frontend
             npm install
             npm run build
-      - run:
-          name: Copy the files to dist
-          command: |
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
       - run:
           name: Copy the files to new S3
