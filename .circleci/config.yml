@@ -339,8 +339,8 @@ jobs:
           command: |
             # Fetch and prepare the BACKEND_IP env var
             cd .circleci/ansible
-            cat frontend/.env
             cat inventory.txt
+            cat frontend/.env
             export BACKEND_IP=$(cat inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
             ls
@@ -405,33 +405,33 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-          context: slack-secret
-      - scan-frontend:
-          requires: [build-frontend]
-          context: slack-secret  
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      #     context: slack-secret
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      #     context: slack-secret  
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #     filters:
+      #       branches:
+      #         only: [master]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      # - deploy-backend:
+      #     requires: [run-migrations]
       - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+          # requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
