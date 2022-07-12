@@ -193,7 +193,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip curl nodejs npm ansible
+            apk add --update tar gzip nodejs npm ansible
             pip install awscli
             aws --version
       - run:
@@ -278,7 +278,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.10-alpine3.16
     steps:
       - checkout
       - add_ssh_keys:
@@ -320,7 +320,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.7-alpine3.11 
+      - image: python:3.10-alpine3.16 
     steps:
       - checkout
       - attach_workspace:
@@ -345,7 +345,6 @@ jobs:
             cat inventory.txt
             export BACKEND_IP=$(cat inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
-            ls
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
@@ -364,10 +363,10 @@ jobs:
             else
                 return 1
             fi
-      # - revert-migrations:
-      #     circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      # - destroy-environment:
-      #     circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
+      - destroy-environment:
+          circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
+      - revert-migrations:
+          circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   # cloudfront-update:
   #   docker:
@@ -407,33 +406,33 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      #     context: slack-secret
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      #     context: slack-secret  
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      - smoke-test
-          # requires: [deploy-backend, deploy-frontend]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+          context: slack-secret
+      - scan-frontend:
+          requires: [build-frontend]
+          context: slack-secret  
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
