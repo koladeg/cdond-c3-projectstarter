@@ -31,7 +31,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = $(curl --insecure  https://kvdb.io/RrQ2ADt1ZS6ZtaGBKafeaL/migration_<< parameters.circle_workflow_id >>)
+            SUCCESS = $(curl --insecure  https://kvdb.io/PExKxp6S61Ln855d48dp9a/migration_<< parameters.circle_workflow_id >>)
             if(( $SUCCESS==1 )); 
             then
              cd ~/project/backend
@@ -229,8 +229,8 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-               # If you are using kvdb.io, generate the bucket ID "P5thQCXKuMdbXnoXdEHU3o" in your local terminal first
-               curl https://kvdb.io/RrQ2ADt1ZS6ZtaGBKafeaL/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              # If you are using kvdb.io, generate the bucket ID "P5thQCXKuMdbXnoXdEHU3o" in your local terminal first
+              curl https://kvdb.io/PExKxp6S61Ln855d48dp9a/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - save_cache:
           paths: [backend/node_modules]
@@ -363,10 +363,10 @@ jobs:
             else
                 return 1
             fi
-      - destroy-environment:
-          circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
-      - revert-migrations:
-          circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      # - destroy-environment:
+      #     circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
+      # - revert-migrations:
+      #     circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   # cloudfront-update:
   #   docker:
