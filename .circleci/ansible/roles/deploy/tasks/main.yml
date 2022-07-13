@@ -1,12 +1,12 @@
 ---
 - name: Copy artifact.tar.gz to EC2
-become: True
+  become: True
   unarchive:
     src: files/artifact.tar.gz
     dest: home/ubuntu
 
 - name: Start app
-become: True
+  become: True
   shell: |
     cd /home/ubuntu/
     npm install
