@@ -236,6 +236,7 @@ jobs:
           key: backend-build
       - revert-migrations:
           circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}" 
+
   deploy-frontend:
     docker:
       - image: python:3.10-alpine3.16
