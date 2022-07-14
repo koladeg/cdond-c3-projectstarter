@@ -217,7 +217,7 @@ jobs:
             pip install awscli
             aws --version
       - run:
-          name: install packages
+          name: install npm packages
           command: |
             cd backend/src
             npm install
