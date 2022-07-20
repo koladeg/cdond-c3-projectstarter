@@ -187,7 +187,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-         fingerprints: [99:6e:62:f0:68:6c:6d:56:87:e3:34:e1:7e:7c:56:92]
+         fingerprints: [6c:22:00:29:33:33:fa:01:28:c5:15:4d:9e:0d:c9:d4]
       - attach_workspace:
           at: ~/
       - run:
@@ -221,7 +221,6 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit fix --audit-level=critical --force
             npm audit fix --force
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
@@ -404,27 +403,27 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      #     context: slack-secret
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      #     context: slack-secret  
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      - run-migrations
-          # requires: [configure-infrastructure]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+          context: slack-secret
+      - scan-frontend:
+          requires: [build-frontend]
+          context: slack-secret  
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
       - deploy-backend:
