@@ -205,22 +205,23 @@ jobs:
 
   run-migrations:
     docker:
-      - image: python:3.10-alpine3.16
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
           keys: [backend-build]
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       apk add --update tar gzip curl nodejs npm openssh-client git
+      #       pip install awscli
+      #       aws --version
       - run:
-          name: Install dependencies
+          name: run migration
           command: |
-            apk add --update tar gzip curl nodejs npm openssh-client git
-            pip install awscli
-            aws --version
-      - run:
-          name: install npm packages
-          command: |
-            cd backend/src
+            cd backend
             npm install
+            npm audit fix --force
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
       - run:
