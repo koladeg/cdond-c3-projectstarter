@@ -250,10 +250,10 @@ jobs:
       - image: python:3.10-alpine3.16
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontend-build]
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Install dependencies
           command: |
@@ -311,8 +311,8 @@ jobs:
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
             pwd
-            mkdir -p ~/project/circleci/ansible/roles/deploy/files
-            cp artifact.tar.gz .circleci/ansible/roles/deploy/files
+            mkdir .circleci/ansible/roles/deploy/files
+            mv artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
