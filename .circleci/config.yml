@@ -223,7 +223,7 @@ jobs:
       #       pip install awscli
       #       aws --version
       - run:
-          name: run migration
+          name: try to run migration
           command: |
             cd backend
             npm install
