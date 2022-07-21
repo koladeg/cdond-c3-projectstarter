@@ -235,7 +235,9 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               # If you are using kvdb.io, generate the bucket ID "P5thQCXKuMdbXnoXdEHU3o" in your local terminal first
-              curl https://kvdb.io/PExKxp6S61Ln855d48dp9a/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl -k https://kvdb.io/PExKxp6S61Ln855d48dp9a/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            else
+              echo "No migrations are pending"
             fi
       - save_cache:
           paths: [backend/node_modules]
