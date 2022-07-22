@@ -286,7 +286,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: python:3.10-alpine3.16
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
@@ -298,7 +298,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip curl nodejs npm ansible openssh-client
+            apk add --update ansible curl rsync openssh nodejs npm
             pip install awscli
             aws --version
       - run:
@@ -306,7 +306,6 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit fix --force
       - run:
           name: Zip the directory
           command: |
