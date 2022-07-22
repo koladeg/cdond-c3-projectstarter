@@ -141,7 +141,7 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
-            npm audit fix --force
+            npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
       - save_cache:
           paths: [backend/node_modules]
@@ -194,13 +194,13 @@ jobs:
       - checkout
       - add_ssh_keys:
          fingerprints: [6c:22:00:29:33:33:fa:01:28:c5:15:4d:9e:0d:c9:d4]
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             apk add --update tar gzip nodejs npm ansible
             pip install awscli
+      - attach_workspace:
+          at: ~/
       - run:
           name: Configure server
           command: |
@@ -250,16 +250,16 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip curl nodejs npm openssh-client git
+            pip install awscli
+            aws --version
       - attach_workspace:
           at: ~/
       - restore_cache:
           keys: [frontend-build]
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update tar gzip curl nodejs npm openssh-client git
-            pip install awscli
-            aws --version
       - run:
           name: Get backend url
           command: |
@@ -291,18 +291,18 @@ jobs:
       - checkout
       - add_ssh_keys:
          fingerprints: [99:6e:62:f0:68:6c:6d:56:87:e3:34:e1:7e:7c:56:92]
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip curl nodejs npm ansible openssh-client
+            pip install awscli
+            aws --version
       - attach_workspace:
           at: ~/
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Install dependencies
-          command: |
-            apk add --update tar gzip curl nodejs npm ansible openssh-client
-            pip install awscli
-            aws --version
-      - run:
-          name: deploy backend
+          name: Deploy backend
           command: |
             cd backend
             npm install
@@ -314,7 +314,7 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
             pwd
             echo "Done printing dir  -------"
-            mkdir .circleci/ansible/roles/deploy/files
+            mkdir .circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files
             ls
             cd .circleci/ansible
@@ -331,14 +331,14 @@ jobs:
       - image: python:3.7-alpine3.11 
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             apk add --update tar gzip curl nodejs npm openssh-client git
             pip install awscli
             aws --version
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
