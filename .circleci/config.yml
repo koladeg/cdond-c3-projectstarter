@@ -291,8 +291,8 @@ jobs:
       - checkout
       - add_ssh_keys:
          fingerprints: [99:6e:62:f0:68:6c:6d:56:87:e3:34:e1:7e:7c:56:92]
-      # - attach_workspace:
-      #     at: ~/
+      - attach_workspace:
+          at: ~/
       - restore_cache:
           keys: [backend-build]
       - run:
@@ -306,6 +306,7 @@ jobs:
           command: |
             cd backend
             npm install
+            npm audit fix --force
       - run:
           name: Zip the directory
           command: |
