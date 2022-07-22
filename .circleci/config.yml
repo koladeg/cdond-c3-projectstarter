@@ -189,7 +189,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.10-alpine3.16
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
@@ -247,7 +247,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: python:3.10-alpine3.16
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - attach_workspace:
@@ -302,21 +302,15 @@ jobs:
             pip install awscli
             aws --version
       - run:
-          name: build backend
+          name: deploy backend
           command: |
             cd backend
             npm install
-      - run:
-          name: Zip the directory
-          command: |
             npm run build
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
             pwd
-      - run:
-          name: deploy backend
-          command: |
             mkdir .circleci/ansible/roles/deploy/files
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd .circleci/ansible
@@ -330,7 +324,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.10-alpine3.16 
+      - image: python:3.7-alpine3.11 
     steps:
       - checkout
       - attach_workspace:
