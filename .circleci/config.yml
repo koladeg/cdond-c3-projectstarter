@@ -305,18 +305,21 @@ jobs:
             pip install awscli
             aws --version
       - run:
-          name: Deploy backend
+          name: build backend
           command: |
             cd backend
             npm i
             npm run build
             cd ..
-            # Zip the directory
-            tar -C backend -czvf artifact.tar.gz .
       - run:
           name: Zip the directory
           command: |
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
             pwd
+      - run:
+          name: deploy backend
+          command: |
             mkdir .circleci/ansible/roles/deploy/files
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd .circleci/ansible
