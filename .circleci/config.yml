@@ -311,6 +311,9 @@ jobs:
             npm i
             npm run build
             cd ..
+      - run:
+          name: Zip the directory
+          command: |
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
             pwd
