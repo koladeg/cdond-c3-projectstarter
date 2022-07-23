@@ -306,7 +306,8 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit fix --force
+            npm audit fix
+            npm install
             echo "Install done -------"
             npm run build
             echo "build done -------"
