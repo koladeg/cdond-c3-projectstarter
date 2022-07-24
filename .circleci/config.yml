@@ -154,7 +154,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: yum -y install tar gzip openssh-client git
+      - run: yum -y install tar gzip 
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -197,7 +197,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip nodejs npm ansible openssh-client git
+            apk add --update tar gzip nodejs npm ansible curl openssh git
             pip install awscli
       - attach_workspace:
           at: ~/
