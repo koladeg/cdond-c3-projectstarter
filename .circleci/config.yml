@@ -254,7 +254,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip curl nodejs npm openssh-client git
+            apk add --update --no-cache tar gzip curl nodejs npm openssh git
             pip install awscli
             aws --version
       - attach_workspace:
@@ -295,7 +295,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip curl nodejs npm ansible openssh-client
+            apk add --update --no-cache tar gzip curl nodejs npm ansible openssh
             pip install awscli
             aws --version
       - attach_workspace:
