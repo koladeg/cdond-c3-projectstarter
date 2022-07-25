@@ -385,18 +385,26 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install -y npm nodejs 
+            yum -y install tar gzip
       - run:
           name: Update cloudfront distribution
           command: |
-            export OldWorkflowID=$(aws cloudformation list-exports \
-            --query "Exports[?Name==\`WorkflowID\`].Value" \
+            OldWorkflowID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             --no-paginate --output text)
+            touch OldWorkflowID.txt
+            echo "$OldWorkflowID" >> ~/OldWorkflowID.txt
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
-              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
+            
+            echo "OldWorkflowID: ${OldWorkflowID}"
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - OldWorkflowID.txt
       - destroy-environment:
           circle_workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
       - revert-migrations:
@@ -408,10 +416,16 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip
+      - attach_workspace:
+          at: ~/
+      - run:
           name: Get old stack workflow id
           command: |
             # Fetch the Old workflow ID
-            export OldWorkflowID-<<pipeline.parameters.workflow_id>>
+            export OldWorkflowID=$(cat ~/OldWorkflowID.txt)
             # Fetch the stack names          
             export STACKS=($(aws cloudformation list-stacks \
             --query "StackSummaries[*].StackName" \
@@ -420,6 +434,8 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
+            export OldWorkflowID=$(cat ~/OldWorkflowID.txt)
+            echo OldWorkflowID: "${OldWorkflowID}"
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               # aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
@@ -460,5 +476,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
