@@ -36,4 +36,5 @@
     - TYPEORM_PORT: 5432  
 
   roles:
+    - configure-prometheus-node-exporter
     - configure-server
